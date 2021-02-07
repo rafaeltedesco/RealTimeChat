@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   
+</head>
+<body>
+    <input type="text" id="name">
+    <br>
+    <br>
+    <textarea rows="5" cols="100" id="message" onkeypress="sendMessage()"></textarea>
+
+    <div id="messages" style="white-space: pre-line;"></div>
+    
+
+    <script src="https://cdn.socket.io/3.1.1/socket.io.min.js"></script>
+    <script>
+        const socket = io('http://localhost:3000')
+        socket.on('server_hello', receiveMessage)
+
+        function sendMessage() {
+            if (event.keyCode === 13 && !event.shiftKey) {
+                let name = document.getElementById('name').value
+                let text = document.getElementById('message').value
+
+                document.getElementById('message').value = ''
+
+                socket.emit('client_hello', {name, text})
+            }
+        }
+
+        function receiveMessage(data) {
+            let element = document.getElementById('messages')
+            element.innerHTML += `
+            <div>
+                <b>${data.name} says: </b> ${data.text}
+            </div>`
+        }
+
+    </script>
+</body>
+</html>
